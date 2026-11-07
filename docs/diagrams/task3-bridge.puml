@@ -1,0 +1,83 @@
+@startuml task3-bridge
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+title Завдання 3. Табло інформації про рейси (Bridge)
+
+abstract class FlightBoard <<Abstraction>> {
+  - device : IBoardDevice
+  + Connect(device : IBoardDevice) : void
+  + Show(journal : Journal) : void
+  # Kind : string
+  # Content : string
+}
+
+class DepartureBoard <<RefinedAbstraction>> {
+  - flightNumber : string
+  - destination : string
+  - time : string
+  + DepartureBoard(flightNumber, destination, time, device)
+}
+
+class ArrivalBoard <<RefinedAbstraction>> {
+  - flightNumber : string
+  - origin : string
+  - time : string
+  + ArrivalBoard(flightNumber, origin, time, device)
+}
+
+class GateBoard <<RefinedAbstraction>> {
+  - flightNumber : string
+  - gate : string
+  + GateBoard(flightNumber, gate, device)
+}
+
+interface IBoardDevice <<Implementor>> {
+  + Name : string
+  + Show(journal, content) : void
+}
+
+class LedPanel <<ConcreteImplementor>> {
+  + Name : string
+  + Show(journal, content) : void
+}
+
+class LcdScreen <<ConcreteImplementor>> {
+  + Name : string
+  + Show(journal, content) : void
+}
+
+class MobileApp <<ConcreteImplementor>> {
+  + Name : string
+  + Show(journal, content) : void
+}
+
+class Projector <<ConcreteImplementor>> {
+  + Name : string
+  + Show(journal, content) : void
+}
+
+class Journal {
+  - minutes : int
+  + Write(source : string, message : string) : void
+}
+
+class Program <<Client>> {
+  + {static} Main() : void
+  - {static} Situation3() : void
+}
+
+DepartureBoard --|> FlightBoard
+ArrivalBoard --|> FlightBoard
+GateBoard --|> FlightBoard
+LedPanel ..|> IBoardDevice
+LcdScreen ..|> IBoardDevice
+MobileApp ..|> IBoardDevice
+Projector ..|> IBoardDevice
+FlightBoard "1" --> "1" IBoardDevice : показує через
+FlightBoard ..> Journal
+IBoardDevice ..> Journal
+Program ..> DepartureBoard : створює
+Program ..> ArrivalBoard : створює
+Program ..> GateBoard : створює
+Program ..> Projector : створює
+@enduml
